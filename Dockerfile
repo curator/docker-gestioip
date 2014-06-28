@@ -1,9 +1,14 @@
 FROM centos
 
 # Install the prereqs
-RUN yum -y install httpd mod_perl make net-snmp net-snmp-utils; yum clean all
+RUN yum -y install httpd mod_perl make net-snmp net-snmp-utils tar wget; yum clean all
 
-RUN curl -o gestioip_3.0.tar.gz http://downloads.sourceforge.net/project/gestioip/gestioip_3.0.tar.gz?r=http%3A%2F%2Fwww.gestioip.net%2F&ts=1403922795&use_mirror=hivelocity
+# Install perl bits because... sigh
+RUN yum -y install perl-Net-IP perl-DBI perl-DBD-mysql perl-DateManip net-snmp-perl perl-Date-Calc perl-TimeDate perl-MailTools perl-Net-DNS perl-GDGraph; yum clean all
+
+RUN curl -L -o gestioip_3.0.tar.gz 'http://downloads.sourceforge.net/project/gestioip/gestioip_3.0.tar.gz?r=http%3A%2F%2Fwww.gestioip.net%2F&ts=1403922795&use_mirror=hivelocity'
+
+RUN tar xzvf gestioip_3.0.tar.gz
 
 # Expose some ports
 EXPOSE 80
