@@ -3,6 +3,8 @@ FROM centos
 # Install the prereqs
 RUN yum -y install httpd mod_perl make net-snmp net-snmp-utils; yum clean all
 
+RUN curl -o gestioip_3.0.tar.gz http://downloads.sourceforge.net/project/gestioip/gestioip_3.0.tar.gz?r=http%3A%2F%2Fwww.gestioip.net%2F&ts=1403922795&use_mirror=hivelocity
+
 # Expose some ports
 EXPOSE 80
 
