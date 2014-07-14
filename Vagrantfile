@@ -20,7 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "forwarded_port", guest: 80, host: 6680
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -72,10 +72,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   cf.policy_server_address = "10.0.2.15"
   # end
 
-  config.vm.provision "shell" do |s|
-    s.inline = "sudo rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm"
-    s.inline = "yum -y install puppet"
-  end 
+  $puppet_setup = <<PUPPET
+    echo "Setting up puppet environment..."
+    if [ ! -e /etc/yum.repos.d/puppetlabs.repo ]; then rpm -Uvh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm; fi
+    if [ ! -e /etc/puppet/puppet.conf ]; then yum -y install puppet; fi
+    puppet module install garethr/docker
+PUPPET
+
+  config.vm.provision "shell" do |puppet|
+    puppet.inline = $puppet_setup
+  end
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.
