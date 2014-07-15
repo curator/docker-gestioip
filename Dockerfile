@@ -22,8 +22,12 @@ RUN yum -y install perl-SNMP-Info; yum clean all
 RUN yum clean all
 
 # Setup httpd users
-RUN if [ ! -f /usr/httpd/users-gestioip ]; then /usr/bin/htpasswd -b -c /etc/httpd/users-gestioip gipoper gipoper; fi
-RUN if [ ! -f /usr/httpd/users-gestioip ]; then /usr/bin/htpasswd -b /etc/httpd/users-gestioip gipadmin gipadmin; fi
+RUN if [ ! -f /root/.gestiooper ]; then echo $(/usr/bin/tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1) > /root/.gestiooper; fi
+RUN chmod 0600 /root/.gestiooper
+RUN if [ ! -f /root/.gestioadmin ]; then echo $(/usr/bin/tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1) > /root/.gestioadmin; fi
+RUN chmod 0600 /root/.gestioadmin
+RUN if [ ! -f /etc/httpd/users-gestioip ]; then /usr/bin/htpasswd -b -c /etc/httpd/users-gestioip gipoper $(cat /root/.gestiooper); fi
+RUN if [ ! -f /etc/httpd/users-gestioip ]; then /usr/bin/htpasswd -b /etc/httpd/users-gestioip gipadmin $(cat /root/.gestioadmin); fi
 
 # Download gestioip itself
 RUN curl -L -o gestioip_3.0.tar.gz 'http://downloads.sourceforge.net/project/gestioip/gestioip_3.0.tar.gz?r=http%3A%2F%2Fwww.gestioip.net%2F&ts=1403922795&use_mirror=hivelocity'
