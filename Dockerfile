@@ -1,4 +1,4 @@
-FROM centos
+FROM centos:centos6
 
 # Install the prereqs
 RUN yum -y install sudo httpd mod_perl make net-snmp net-snmp-utils tar wget which
